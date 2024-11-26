@@ -1,3 +1,4 @@
+import math
 import flet as ft
 
 
@@ -54,7 +55,7 @@ class CalculatorApp(ft.Container):
                 ft.Row(
                     controls=[
                         UsefulActionButton(
-                            text="√", button_clicked=self.button_clicked
+                            text="√x", button_clicked=self.button_clicked
                         ),
                         ExtraActionButton(
                             text="AC", button_clicked=self.button_clicked
@@ -151,6 +152,33 @@ class CalculatorApp(ft.Container):
                 self.result.value = str(
                     self.format_number(abs(float(self.result.value)))
                 )
+            
+        elif data in ("√x"):
+            val = float(self.result.value)
+            if val >= 0:
+                self.result.value = str(self.format_number(val ** 0.5))
+            else:
+                self.result.value = "Error"
+            self.reset()
+
+        elif data in ("x²"):
+            self.result.value = str(self.format_number(float(self.result.value) ** 2))
+            self.reset()
+        elif data in ("1/x"):
+            val = float(self.result.value)
+            if val != 0:
+                self.result.value = str(self.format_number(1 / val))
+            else:
+                self.result.value = "Error"
+            self.reset()
+        elif data in ("DEL"):
+            if len(self.result.value) > 1:
+                self.result.value = self.result.value[:-1]
+            else:
+                self.result.value = "0"
+
+        elif data in ("π"):
+             self.result.value = str(self.format_number(self.pi()))
 
         self.update()
 
@@ -159,6 +187,12 @@ class CalculatorApp(ft.Container):
             return int(num)
         else:
             return num
+        
+
+    def pi(self):
+        # 円周率の値を手動で定義
+        return 3.141592653589793
+
 
     def calculate(self, operand1, operand2, operator):
 
