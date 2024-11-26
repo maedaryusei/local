@@ -1,3 +1,4 @@
+import math
 import flet as ft
 
 
@@ -30,6 +31,12 @@ class ExtraActionButton(CalcButton):
         self.bgcolor = ft.colors.BLUE_GREY_100
         self.color = ft.colors.BLACK
 
+class UsefulActionButton(CalcButton):
+    def __init__(self, text, button_clicked):
+        CalcButton.__init__(self, text, button_clicked)
+        self.bgcolor = ft.colors.PINK_100
+        self.color = ft.colors.BLACK
+
 
 class CalculatorApp(ft.Container):
     # application's root control (i.e. "view") containing all other controls
@@ -38,7 +45,7 @@ class CalculatorApp(ft.Container):
         self.reset()
 
         self.result = ft.Text(value="0", color=ft.colors.WHITE, size=20)
-        self.width = 350
+        self.width = 500
         self.bgcolor = ft.colors.BLACK
         self.border_radius = ft.border_radius.all(20)
         self.padding = 20
@@ -47,6 +54,9 @@ class CalculatorApp(ft.Container):
                 ft.Row(controls=[self.result], alignment="end"),
                 ft.Row(
                     controls=[
+                        UsefulActionButton(
+                            text="√x", button_clicked=self.button_clicked
+                        ),
                         ExtraActionButton(
                             text="AC", button_clicked=self.button_clicked
                         ),
@@ -59,6 +69,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        UsefulActionButton(text="x²", button_clicked=self.button_clicked),
                         DigitButton(text="7", button_clicked=self.button_clicked),
                         DigitButton(text="8", button_clicked=self.button_clicked),
                         DigitButton(text="9", button_clicked=self.button_clicked),
@@ -67,6 +78,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        UsefulActionButton(text="1/x", button_clicked=self.button_clicked),
                         DigitButton(text="4", button_clicked=self.button_clicked),
                         DigitButton(text="5", button_clicked=self.button_clicked),
                         DigitButton(text="6", button_clicked=self.button_clicked),
@@ -75,6 +87,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        UsefulActionButton(text="DEL", button_clicked=self.button_clicked),
                         DigitButton(text="1", button_clicked=self.button_clicked),
                         DigitButton(text="2", button_clicked=self.button_clicked),
                         DigitButton(text="3", button_clicked=self.button_clicked),
@@ -83,6 +96,9 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                         UsefulActionButton(
+                            text="π", button_clicked=self.button_clicked
+                        ),
                         DigitButton(
                             text="0", expand=2, button_clicked=self.button_clicked
                         ),
@@ -136,6 +152,33 @@ class CalculatorApp(ft.Container):
                 self.result.value = str(
                     self.format_number(abs(float(self.result.value)))
                 )
+            
+        elif data in ("√x"):
+            val = float(self.result.value)
+            if val >= 0:
+                self.result.value = str(self.format_number(val ** 0.5))
+            else:
+                self.result.value = "Error"
+            self.reset()
+
+        elif data in ("x²"):
+            self.result.value = str(self.format_number(float(self.result.value) ** 2))
+            self.reset()
+        elif data in ("1/x"):
+            val = float(self.result.value)
+            if val != 0:
+                self.result.value = str(self.format_number(1 / val))
+            else:
+                self.result.value = "Error"
+            self.reset()
+        elif data in ("DEL"):
+            if len(self.result.value) > 1:
+                self.result.value = self.result.value[:-1]
+            else:
+                self.result.value = "0"
+
+        elif data in ("π"):
+             self.result.value = str(self.format_number(self.pi()))
 
         self.update()
 
@@ -144,6 +187,12 @@ class CalculatorApp(ft.Container):
             return int(num)
         else:
             return num
+        
+
+    def pi(self):
+        # 円周率の値を手動で定義
+        return 3.141592653589793
+
 
     def calculate(self, operand1, operand2, operator):
 
