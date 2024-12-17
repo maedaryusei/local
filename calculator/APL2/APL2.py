@@ -8,7 +8,7 @@ def fetch_region_codes():
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
-            print(data)  # デバッグ用にレスポンス内容を出力
+            # 地域コードと地域名の対応を作成
             return {
                 region["name"]: code
                 for code, region in data["class10s"].items()
@@ -23,18 +23,15 @@ def fetch_region_codes():
         print(f"レスポンスの解析中にエラーが発生しました: {e}")
         return None
 
-
 # 天気データ取得関数
 def fetch_weather(region_code):
-    url = f"https://www.jma.go.jp/bosai/forecast/data/forecast/"
-    print(f"リクエストURL: {url}")  # デバッグ用
+    url = f"https://www.jma.go.jp/bosai/forecast/data/forecast/{region_code}.json"
     try:
         response = requests.get(url)
         if response.status_code == 200:
             return response.json()
         else:
             print(f"天気データの取得に失敗しました。ステータスコード: {response.status_code}")
-            print(response.text)  # エラー内容を出力
             return None
     except requests.exceptions.RequestException as e:
         print(f"リクエスト中にエラーが発生しました: {e}")
@@ -42,7 +39,6 @@ def fetch_weather(region_code):
     except ValueError as e:
         print(f"レスポンスの解析中にエラーが発生しました: {e}")
         return None
-
 
 # アプリのメイン関数
 def main(page: ft.Page):
